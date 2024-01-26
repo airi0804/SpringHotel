@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<!--/* Bootstrap CDN */-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<style>
+	body {
+		text-align: center;
+		/** ベース */
+		background-color: #F3FFFC;
+		/** アクセント */
+		color: #135389;
+	}
+	
+	.line {
+		/** 長さ */
+		width: 95%;
+		margin: 30px auto;
+		padding-top: 30px;
+    	border-top: double 8px navy;
+	}
+	
+	.line2 {
+		width: 95%;
+		margin: 40px auto;
+		padding: 40px 0;
+		border-top: solid 3px navy;
+	}
+	
+	/** 予約ごとに点線で区切る */
+	.line3 {
+		width: 85%;
+		margin: 55px auto 0;
+		padding: 15px 0;
+		border-top: dotted 2px navy;
+	}
+	
+	/** line3 一件目 */
+	.line3:first-child {
+		/** 点線を付けない */
+		border-top: none;
+		/** 点線が無いのでmarginも減らす */
+		margin: -30px auto 0;
+	}
+	
+	title, h1, h2, h3, h4 {
+		/** テキスト */
+		color: navy;
+	}
+	
+	h1, h2 {
+		margin-top: 30px;
+	}
+	
+	table {
+		width: calc(100% - 20px);
+		margin: 30px 10px;
+	}
+	
+	table th{
+		/** table th */
+		background-color: #8FDCFF;
+	}
+	
+	table td{
+		/** table td */
+		background-color: #E1F6FD;
+	}
+
+	th,
+	td {
+		padding: 10px 5px;
+		text-align: center;
+		/** アクセント */
+		border: solid 2px #135389;
+		/** 垂直方向の位置の調整 */
+		vertical-align:middle;
+		color: navy;
+	}
+	
+	input[type="text"] {
+		display: inline-block;
+	}
+
+	button[type="submit"] {
+		width: 150px;
+		background-color: #E1F6FD;
+		/** テキスト */
+		color: navy;
+		padding: 10px 0;
+		font-size: 15px;
+		border-radius: 5px;
+		border: solid 2px #8FDCFF;
+		box-shadow: 0 2px 5px #666;
+		position: relative;
+		display: inline-block;
+		top: -2px;
+		padding: 5px 10px;
+	}
+	
+	button[type="submit"]:hover {
+		box-shadow: 0 1px 5px #666;
+		top: 1px;
+	}
+	
+	/** 予約、予約情報変更、予約画面へ戻るボタン */
+	.btn1 {
+		margin: 20px 0;
+		height: 55px;
+	}
+	
+	.btn2 {
+		height: 45px;
+	}
+	
+	/** リンクの線を消す */
+	a {
+		text-decoration: none;
+	}
+	
+	.errorBox {
+		width: 65%;
+		border-top: solid 2px gray;
+		border-bottom: solid 2px gray;
+		background-color: rgb(251, 196, 196);
+		box-shadow: 0px 0px 5px 3px rgb(251, 196, 196);
+		margin: 20px auto;
+	}
+	
+	.error {
+		margin: 0 0 15px 35px;
+	}
+</style>
+<title>ホテルの新規予約・変更・キャンセル ページ</title>
+</head>
+<body>
+	<h1>新規予約・変更・キャンセル ページ</h1>
+<!--	<hr>-->
+	<div class="line scroll">
+		<h2 th:text="${title}">タイトル</h2>
+		<!--/* 登録・更新完了コメント */-->
+		<p th:if="${complete}" th:text="${complete}" style="color: blue"></p>
+		<!--/* ▼▼▼ Form ▼▼▼ */-->
+		<form method="POST"
+			th:action="${hotelForm.newHotel}? @{/hotel/insert} : @{/hotel/update}"
+			th:object="${hotelForm}">
+			<div  class="scroll">
+			<table class="table1">
+				<!-- エラーを画面上部に表示する -->
+				<div class="errorBox" th:if="${#fields.hasErrors('*')}">
+					<h3>入力した内容が正しくありません</h3>
+					<p class="error" type="circle"
+						th:each="error:${#fields.detailedErrors()}"
+						th:text="${error.message}" style="color: red">
+						Error Message
+					</p>
+				</div>
+<!--				<ul th:if="${#fields.hasErrors('*')}">-->
+<!--					<li th:each="err:${#fields.errors('*')}" th:text="${err}"></li>-->
+<!--				</ul>-->
+			
+			
+				<!--/* ▼▼▼ 氏名 ▼▼▼ */-->
+				<tr>
+					<th>氏名</th>
+					<td>
+						<input type="text" th:field="*{name}" />
+						<div th:if="${#fields.hasErrors('name')}"
+							 th:errors="*{name}" style="color: red"></div>
+					</td>
+				</tr>
+		
+		
+				<!--/* ▼▼▼ 電話番号 ▼▼▼ */-->
+				<tr>
+					<th>
+						電話番号
+<!--						<p class="tel_p">半角、ハイフンありで入力してください</p>-->
+					</th>
+					<td>
+						<input type="text" th:field="*{tel}"
+							   pattern="^0\d{1,4}-\d{1,4}-\d{4}$"
+							   placeholder="半角、ハイフンありで入力してください"
+							   style="width: 250px;" />
+						<div th:if="${#fields.hasErrors('tel')}"
+							 th:errors="*{tel}" style="color: red">
+						</div>
+					</td>
+			</tr>
+			
+		
+				<!--/* ▼▼▼ 住所 ▼▼▼ */-->
+				<tr>
+					<th>住所</th>
+					<td>
+						<input type="text" th:field="*{address}" style="width: 50%;" />
+						<div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" style="color: red"></div>
+					</td>
+				</tr>
+		
+		
+				<!--/* ▼▼▼ チェックイン日 ▼▼▼ */-->
+				<tr>
+					<th>チェックイン日</th>
+					<td>
+						<input type="date" th:field="*{check_in}" />
+						<div th:if="${#fields.hasErrors('check_in')}" th:errors="*{check_in}" style="color: red"></div>
+					</td>
+				</tr>
+		
+		
+				<!--/* ▼▼▼ チェックアウト日 ▼▼▼ */-->
+				<tr>
+					<th>チェックアウト日</th>
+					<td>
+						<input type="date" th:field="*{check_out}" />
+						<div th:if="${#fields.hasErrors('check_out')}"
+							 th:errors="*{check_out}" 
+							 style="color: red"></div>
+<!--						<div th:if="${check}"-->
+<!--							 th:text="#{com.example.hotel.validator.HotelValidator.message}"  -->
+<!--							 style="color: red">-->
+<!--						</div>-->
+					</td>
+				</tr>
+		
+		
+				<!--/* ▼▼▼ 人数 ▼▼▼ */-->
+				<tr>
+					<th>人数</th>
+					<td>
+						<select name="people" id="people" th:field="*{people}">
+							<option value="">選択してください</option>
+        					<option value="１人">１人</option>
+        					<option value="２人">２人</option>
+        					<option value="３人">３人</option>
+        					<option value="４人">４人</option>
+	  	    			</select>
+						<div th:if="${#fields.hasErrors('people')}" th:errors="*{people}" style="color: red"></div>
+					</td>
+				</tr>		
+		
+				<!--/* ▼▼▼ 値段 ▼▼▼ */-->
+				<tr>
+					<th>コース</th>
+					<td>
+						<select name="course" id="course" th:field="*{course}">
+							<option value="">選択してください</option>
+        					<option value="スタンダード 10000円">スタンダード 10000円</option>
+	        				<option value="スペシャル 15000円">スペシャル 15000円</option>
+    	  				</select>
+						<div th:if="${#fields.hasErrors('course')}" th:errors="*{course}" style="color: red"></div>
+					</td>
+				</tr>
+			</table>
+			</div>
+	
+			<div class="c">
+				<input th:if="${id}" type="hidden" th:field="*{id}">
+<!--				<input type="submit" value="予約">-->
+				<button type="submit" class="btn1 btn btn-outline-dark" th:text="${title2}">予約ボタン</button>
+			</div>
+		</form>
+	</div>
+<!--		<hr>-->
+	<!--/* ▼▼▼ 新規登録時のみ表示 ▼▼▼ */-->
+	<div class="line2 scroll" th:if="${hotelForm.newHotel}">
+		<h2>登録予約一覧</h2>
+		<!--/* 削除完了コメント */-->
+		<p th:if="${delcomplete}" th:text="${delcomplete}" style="color: blue"></p>
+		<p th:if="${msg}" th:text="${msg}" style="color: red"></p>
+		<!--/* ▼▼▼ 予約情報が1件でもあれば表示 ▼▼▼ */-->
+		<div th:unless="${#lists.isEmpty(list)}">
+			<table class="table2" th:each="obj : ${list}">
+			<div class="line3"></div>
+				<tr>
+					<th>ID</th>
+					<td th:text="${obj.id}"></td>
+				</tr>
+				<tr>
+					<th>氏名</th>
+					<td th:text="${obj.name}"></td>
+				</tr>
+				<tr>
+					<th>電話番号</th>
+					<td th:text="${obj.tel}"></td>
+				</tr>
+				<tr>
+					<th>チェックイン日</th>
+					<td th:text="${obj.check_in}"></td>
+				</tr>
+				<tr>
+					<th>チェックアウト日</th>
+					<td th:text="${obj.check_out}"></td>
+				</tr>
+				<tr>
+					<th>人数</th>
+					<td th:text="${obj.people}"></td>
+				</tr>
+				<tr>
+					<th>コース</th>
+					<td th:text="${obj.course}"></td>
+				</tr>
+				<tr>
+					<!--/* 編集ボタン */-->
+					<th>編集</th>
+					<td>
+						<form method="GET" th:action="@{/hotel/{id}(id=${obj.id})}">
+<!--							<input type="submit" value="編集">-->
+							<button type="submit" class="btn2 btn btn-outline-dark">変更</button>
+						</form>
+					</td>
+				</tr>
+				<tr>
+					<!--/* 削除ボタン */-->
+					<th>削除</th>
+					<td>
+						<form method="POST" th:action="@{/hotel/delete}">
+							<input type="hidden" name="id" th:value="${obj.id}">
+<!--							<input type="submit" value="削除">-->
+							<button type="submit" class="btn2 btn btn-outline-dark">キャンセル</button>
+						</form>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!--/* ▼▼▼ 予約情報が1件もない場合表示 ▼▼▼ */-->
+		<h4 th:if="${#lists.isEmpty(list)}">予約はありません。</h4>
+	</div>
+	<!--/* ▼▼▼ 新規登録時でない時に表示 ▼▼▼ */-->
+	<p th:unless="${hotelForm.newHotel}">
+		<button type="submit" class="btn1 btn btn-outline-dark">
+			<a href="#" th:href="@{/hotel}">予約画面へ戻る</a>
+		</button>
+	</p>
+</body>
+</html>
