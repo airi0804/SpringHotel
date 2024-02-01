@@ -45,7 +45,7 @@ public class HotelController {
 		//表示用「Model」への格納
 		model.addAttribute("list", list);
 		model.addAttribute("title", "新規予約");
-		model.addAttribute("title2", "予約する");
+		model.addAttribute("title2", "予約");
 		return "crud";
 	}
 	/** 予約データを1件挿入 */
@@ -65,7 +65,7 @@ public class HotelController {
 		if(!bindingResult.hasErrors()) {
 			service.insertHotel(hotel);
 			redirectAttributes.addFlashAttribute("complete", "予約しました");
-			return "redirect:/hotel";
+			return "redirect:/hotel#move";
 		} else {
 			// エラーがある場合は、一覧表示処理を呼びます
 			return showList(hotelForm, model);
@@ -84,7 +84,7 @@ public class HotelController {
 		}
 		// 更新用のModelを作成する
 		makeUpdateModel(hotelForm, model);
-		return "crud";
+		return "update";
 	}
 	/** 更新用のModelを作成する */
 	private void makeUpdateModel(HotelForm hotelForm, Model model) {
@@ -92,7 +92,6 @@ public class HotelController {
 		hotelForm.setNewHotel(false);
 		model.addAttribute("hotelForm", hotelForm);
 		model.addAttribute("title", "予約変更");
-		model.addAttribute("title2", "予約情報を変更する");
 	}
 	/** idをKeyにしてデータを更新する */
 	@PostMapping("/update")
@@ -113,7 +112,7 @@ public class HotelController {
 		} else {
 			// 更新用のModelを作成する
 			makeUpdateModel(hotelForm, model);
-			return "curd";
+			return "update";
 		}
 	}
 	// ---------- 【以下はFormとDomainObjectの詰めなおし】 ----------
@@ -153,7 +152,7 @@ public class HotelController {
 		//タスクを1件削除してリダイレクト
 		service.deleteHotelById(Integer.parseInt(id));
 		redirectAttributes.addFlashAttribute("delcomplete", "キャンセルしました");
-		return "redirect:/hotel";
+		return "redirect:/hotel#move2";
 	}
 	
 

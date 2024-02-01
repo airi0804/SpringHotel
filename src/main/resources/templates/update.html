@@ -37,7 +37,7 @@
 		width: 85%;
 		margin: 55px auto 0;
 		padding: 15px 0;
-		border-top: dotted 3px navy;
+		border-top: dotted 2px navy;
 	}
 	
 	/** line3 一件目 */
@@ -168,12 +168,12 @@
 		margin: 0 0 15px 35px;
 	}
 </style>
-<title>ホテルの新規予約・変更・キャンセル ページ</title>
+<title>変更 ページ</title>
 </head>
 <body>
-	<h1>新規予約・変更・キャンセル ページ</h1>
+	<h1>変更 ページ</h1>
 	<div class="line">
-		<h2 id="move" th:text="${title}">タイトル</h2>
+		<h2 th:text="${title}">タイトル</h2>
 		<!--/* 登録・更新完了コメント */-->
 		<p th:if="${complete}" th:text="${complete}" style="color: blue"></p>
 		<form method="POST"
@@ -211,7 +211,7 @@
 						電話番号
 					</th>
 					<td>
-						<input type="tel" th:field="*{tel}"
+						<input type="text" th:field="*{tel}"
 							   pattern="^0\d{1,4}-\d{1,4}-\d{4}$"
 							   placeholder="半角、ハイフンありで入力してください"
 							   style="width: 250px;" />
@@ -226,7 +226,7 @@
 				<tr>
 					<th>住所</th>
 					<td>
-						<input type="text" id="addressInput" th:field="*{address}" style="width: 50%;" />
+						<input type="text" th:field="*{address}" style="width: 50%;" />
 						<div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" style="color: red"></div>
 					</td>
 				</tr>
@@ -257,7 +257,7 @@
 					</td>
 				</tr>
 		
-		
+
 				<!--/* ▼▼▼ 人数 ▼▼▼ */-->
 				<tr>
 					<th>人数</th>
@@ -288,74 +288,20 @@
 				</tr>
 			</table>
 	
-<!--			予約ボタン-->
+<!--			予約情報変更ボタン-->
 			<div class="c">
 				<input th:if="${id}" type="hidden" th:field="*{id}">
-				<button type="submit" class="btn1" th:text="${title2}">予約ボタン</button>
+				<button type="submit" class="btn1">予約情報を変更</button>
 			</div>
 		</form>
 	</div>
-	<div class="line2" th:if="${hotelForm.newHotel}">
-		<h2 id="move2">登録予約一覧</h2>
-		<!--/* 削除完了コメント */-->
-		<p th:if="${delcomplete}" th:text="${delcomplete}" style="color: blue"></p>
-		<p th:if="${msg}" th:text="${msg}" style="color: red"></p>
-		<!--/* 予約情報が1件でもあれば表示 */-->
-		<div th:unless="${#lists.isEmpty(list)}">
-			<table class="table2" th:each="obj : ${list}">
-			<div class="line3"></div>
-				<tr>
-					<th>ID</th>
-					<td th:text="${obj.id}"></td>
-				</tr>
-				<tr>
-					<th>氏名</th>
-					<td th:text="${obj.name}"></td>
-				</tr>
-				<tr>
-					<th>電話番号</th>
-					<td th:text="${obj.tel}"></td>
-				</tr>
-				<tr>
-					<th>チェックイン日</th>
-					<td th:text="${obj.check_in}"></td>
-				</tr>
-				<tr>
-					<th>チェックアウト日</th>
-					<td th:text="${obj.check_out}"></td>
-				</tr>
-				<tr>
-					<th>人数</th>
-					<td th:text="${obj.people}"></td>
-				</tr>
-				<tr>
-					<th>コース</th>
-					<td th:text="${obj.course}"></td>
-				</tr>
-				<tr>
-					<!--/* 予約情報変更ボタン */-->
-					<th>変更</th>
-					<td>
-						<form method="GET" th:action="@{/hotel/{id}(id=${obj.id})}">
-							<button type="submit" class="btn2 btn btn-outline-dark">変更</button>
-						</form>
-					</td>
-				</tr>
-				<tr>
-					<!--/* キャンセルボタン */-->
-					<th>キャンセル</th>
-					<td>
-						<form method="POST" th:action="@{/hotel/delete}">
-							<input type="hidden" name="id" th:value="${obj.id}">
-							<button type="submit" class="btn2 btn btn-outline-dark">キャンセル</button>
-						</form>
-					</td>
-				</tr>
-			</table>
-		</div>
-		<!--/* 予約情報が1件もない場合 */-->
-		<h2 th:if="${#lists.isEmpty(list)}">予約はありません。</h2>
-	</div>
+	<!--/* 予約画面へ戻るボタン */-->
+	<p th:unless="${hotelForm.newHotel}">
+		<button type="submit" onclick="location.href='http://localhost:8080/hotel'" th:href="@{/hotel}" class="btn1 btn btn-outline-dark">
+<!--			<a href="#" th:href="@{/hotel}">予約画面へ戻る</a>-->
+				予約画面へ戻る
+		</button>
+	</p>
 <!--	ページトップに戻るボタン-->
 	<a class="pagetop" href="#">▲</a>
 </body>
